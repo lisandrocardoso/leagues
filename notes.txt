@@ -1,0 +1,106 @@
+Overview
+
+- Registration
+
+-- Either by "Team inscription to league" page:
+---- Username
+---- Full name
+---- E-Mail
+---- Password (if registering)
+---- Team Name
+---- (login with Facebook enabled, completes Username, Full name, E-Mail and password)
+---- *(A user can register an existing Team of his own onto another League)
+-- Or by "Create league" page:
+---- (same as above, except Team Name)
+-- Team Inscription can have a Login (if user already exists)
+---- Existing user can select from existing teams
+
+- Login page
+-- On Login, user gets a page with My Leagues and My Teams options
+
+- MyLeagues
+-- Select from different leagues
+-- If a user owns a League, he is the admin
+---- Admin can open/close inscription
+---- Admin can create/delete/randomize fixtures
+---- Admin can input match results
+---- Admin can approve submitted match results
+---- Admin can edit match results
+---- Admin can edit league board, league rules
+-- If a user has a team on the League
+---- User can check league standings
+---- User can check all fixtures
+---- User can submit match results for approval
+---- User can post on league board
+
+- MyTeams
+-- Show stats for every team / every league
+-- Select team to browse
+-- Select league to browse
+---- Browsing league:
+------ Standings (Group, Main, ...) *
+-------- User can change sort parameters
+------ Fixtures *
+-------- Latest fixture by default
+-------- User can select fixture number / date
+-------- User can submit fixture scores
+------ Board
+-------- Post on board
+------ Rules (View only)
+------ Contact admin (form)
+*: Standing and fixtures can be displayed together, side by side as widgets
+
+(Make flow drawing)
+
+
+
+
+Main Features
+
+
+- Facebook login
+- Tipo de torneo (liga, eliminatoria, eliminatoria con sedes, ladder, ...)
+- Promedios (premium)
+- Divisiones (premium)
+
+- Random bullshit
+  Events
+    - Goal (minute, type)
+    - Red C (minute)
+    - Yellow C (minute)
+    - Sub - in (minute)
+    - Sub - out (minute)
+
+- Auto fixture completion:
+  If both users submit the same score then the fixture is completed automatically
+
+DB Schema
+
+- User
+	id
+	name
+
+- Team
+	id
+	name
+	(notes)
+
+- Tournament
+	id
+	name
+	adminID
+
+- Fixture
+	id
+	tournamentID
+	date
+	homeTeamID
+	homeTeamScore
+	awayTeamID
+	awayTeamScore
+	(notes)
+
+- TeamToTournament
+	teamID
+	tournamentID
+
