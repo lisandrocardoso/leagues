@@ -1,27 +1,24 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from BaseObject import BaseObject
 
 
 class Fixture(BaseObject):
 
     def set_up(self, **kwargs):
-        self.dates = {}
+        self.competitionId = kwargs.get('competitionId')
+        self.stageId = kwargs.get('stageId')
+        self.matches = []
 
-    def add_date(self, dateId, dateDate="", dateInfo=""):
-        if self.dates.get(dateId, 0):
-            return
-        self.dates[dateId] = {'matches': [],
-                              'dateDate': dateDate,
-                              'dateInfo': dateInfo}
+    def add_match(self, matchId):
+        self.matches.append(matchId)
 
-    def add_match_to_date(self, dateId, matchId):
-        if self.dates.get(dateId, 0):
-            if not matchId in self.dates[dateId]['matches']:
-                self.dates[dateId]['matches'].append(matchId)
+    def del_match(self, matchId):
+        if matchId in self.matches:
+            self.matches.remove(matchId)
 
-    def get_date(self, dateId):
-        if self.dates.get(dateId):
-            return self.dates[dateId]
-        else:
-            return {}
+    def get_matches(self):
+        return self.matches
+

@@ -1,79 +1,53 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from BaseObject import BaseObject
 
 
 class Match(BaseObject):
     """ Internal status tracking:
-        UNSET = 0,
+        # UNSET = 0,
         SET = 2
-        PLAYING = 3
+        # PLAYING = 3
         FINISHED = 4"""
 
     def set_up(self, **kwargs):
+        self.fixtureId = kwargs.get('fixtureId')
+        self.competitionId = kwargs.get('competitionId')
+        self.fullDate = kwargs.get('fullDate')
         self.status = 0
-        self.team_home = 0
-        self.team_away = 0
-        self.score_home = 0
-        self.score_away = 0
-        if kwargs.get('team_home', 0):
-            self.add_team_home(kwargs.get('team_home'))
-        if kwargs.get('team_away', 0):
-            self.add_team_away(kwargs.get('team_away'))
+        self.homeTeamId = kwargs.get('homeTeamId', 0)
+        self.homeTeamScore = None
+        self.awayTeamId = kwargs.get('awayTeamId', 0)
+        self.awayTeamScore = None
 
-    def add_team_home(self, teamID):
-        if not self.team_home:
-            self.team_home = teamID
-            self.score_home = 0
-            self.status += 1
-            return True
-        else:
-            return False
+        if self.homeTeamId and self.awayTeamId:
+            self.status = 2
 
-    def add_team_away(self, teamID):
-        if not self.team_away:
-            self.team_away = teamID
-            self.score_away = 0
-            self.status += 1
-            return True
-        else:
-            return False
+    def add_score(self, homeScore = 0, awayScore = 0):
+        self.add_score_home(points = homeScore)
+        self.add_score_away(points = awayScore)
 
-    def start_match(self):
-        if self.status == 2:
-            self.status += 1
-            return True
-        else:
-            return False
+    def add_score_home(self, points = 0):
+        self.homeTeamScore = points
 
-    def end_match(self):
-        if self.status == 3:
-            self.status += 1
-            return True
-        else:
-            return False
+    def add_score_away(self, points = 0):
+        self.awayTeamScore = points
 
-    def add_score_home(self, points=1, memberID=0):
-        """ Add member scoring tracking"""
-        if self.status == 3:
-            self.score_home += points
-            return True
-        else:
-            return False
+    def get_match_data(self):
+        return { "homeTeamId" : self.homeTeamId,
+                 "homeTeamScore" : self.homeTeamScore,
+                 "awayTeamId" : self.awayTeamId,
+                 "awayTeamScore" : self.awayTeamScore,
+                 "status" : self.status,
+                 "fullDate" : self.get_date_string(self.fullDate)
+               }
 
-    def add_score_away(self, points=1, memberID=0):
-        """ Add member scoring tracking"""
-        if self.status == 3:
-            self.score_away += points
-            return True
-        else:
-            return False
+    def get_date(self):
+        return self.fullDate
 
-    def get_teams(self):
-        return (self.team_home, self.team_away)
+    def get_date_string(self):
+        return fullDate.strftime("%Y-%m-%d %H:%M:%S")
 
-    def get_score(self):
-        if self.status >= 2:
-            return (self.score_home, self.score_away)
-        else:
-            return (0, 0)
+

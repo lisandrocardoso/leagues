@@ -7,13 +7,8 @@ class BaseLeague(BaseObject):
 
     def set_up(self, **kwargs):
         self.type = ""
-        # stage type = group, draft
-        # stage order
-        # stage date ?
-        # stage rules ?
-
-        self.stages = {} 
         self.teams = []
+        self.fixtures = []
 
     def add_team(self, teamId):
         pass
