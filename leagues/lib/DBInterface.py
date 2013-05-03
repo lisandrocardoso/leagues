@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from Draft import Draft
+from Fixture import Fixture
+from Match import Match
+from Team import Team
+
 
 class DBInterface():
 
@@ -44,3 +49,6 @@ class DBInterface():
 
         #get last insert id and return it
         pass
+
+    def load_draft(self, draftId):
+        return Draft()

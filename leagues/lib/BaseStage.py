@@ -56,3 +56,8 @@ class BaseStage(BaseObject):
 
     def get_data(self):
         return self.data
+
+### Placeholders
+
+    def generate_fixture(self):
+        return False
