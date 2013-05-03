@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
 
-import datetime
-
 from BaseObject import BaseObject
 
 
 class Fixture(BaseObject):
 
     def set_up(self, **kwargs):
-        self.competitionId = kwargs.get('competitionId')
-        self.stageId = kwargs.get('stageId')
-        self.matches = []
+        self.matches = set()
 
     def add_match(self, matchId):
-        self.matches.append(matchId)
+        self.matches.add(matchId)
 
     def del_match(self, matchId):
-        if matchId in self.matches:
+        try: 
             self.matches.remove(matchId)
+        except:
+            pass
 
-    def get_matches(self):
-        return self.matches
+       
 
