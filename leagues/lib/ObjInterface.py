@@ -10,27 +10,34 @@ from Team import Team
 import Tools
 
 class ObjInterface():
-    
+
     def __init__(self):
         super(ObjInterface, self).__init__()
 
-    def generate_draft_fixtures(self, draftId):
+   #def generate_seeded_draft_fixtures
+    def generate_random_draft_fixtures(self, draftId):
         # Load object from DB with ID
         draft = DBInterface.load_draft(draftId)
-        
+
         if not draft.teams:
             return False
 
         if draft.fixtures:
             return False
 
-        legs = draft.data.get('legs')
+        fixtures = {}
+
+        for i in range(0, draft.data.get('legs')):
+            
 #        self.data['current_fixture'] = 0
 
-        teams = draft.teams
+        result_teams = draft.teams
 
-        while len(teams):
-            (team, teams) = Tools.pick_random(teams, 2)
-    
+        while len(result_teams):
+            (picked_teams, result_teams) = Tools.pick_random(teams, 2)
+            if len(picked_teams) == 1:
+                unmatched_team = picked_teams[0]
+            else:
+                matchId = DBInterface.create_match()
 
-        
+

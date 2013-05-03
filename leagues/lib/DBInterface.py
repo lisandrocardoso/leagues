@@ -51,4 +51,12 @@ class DBInterface():
         pass
 
     def load_draft(self, draftId):
+        # Load draft data from DB
         return Draft()
+
+
+    def create_match(self):
+        # Insert a new match entry, return last_inserted_id
+        # Only for test purposes:
+        for i in range (0, 99999):
+            yield i

@@ -7,6 +7,7 @@ class Fixture(BaseObject):
 
     def set_up(self, **kwargs):
         self.matches = set()
+        self.unmatched_teams = set()
 
     def add_match(self, matchId):
         self.matches.add(matchId)
@@ -16,6 +17,4 @@ class Fixture(BaseObject):
             self.matches.remove(matchId)
         except:
             pass
-
-       
 
