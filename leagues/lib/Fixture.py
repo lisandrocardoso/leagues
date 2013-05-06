@@ -13,7 +13,7 @@ class Fixture(BaseObject):
         self.matches.add(matchId)
 
     def del_match(self, matchId):
-        try: 
+        try:
             self.matches.remove(matchId)
         except:
             pass

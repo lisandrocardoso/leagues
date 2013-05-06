@@ -8,9 +8,9 @@ def pick_random(input_set, count = 1):
             items = random.sample(input_set, 1)
         else:
             return ([], set())
-        
+
     for it in items:
         input_set.remove(it)
-   
+
     return items, input_set
 

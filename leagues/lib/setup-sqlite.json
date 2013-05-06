@@ -1,0 +1,104 @@
+[
+    { "name" : "user",
+      "sql" : [
+        "CREATE TABLE user",
+        "(id INTEGER PRIMARY KEY,",
+        "name TEXT,",
+        "password TEXT)"
+        ]
+    },
+    { "name" : "team",
+      "sql" : [
+        "CREATE TABLE team",
+        "(id INTEGER PRIMARY KEY,",
+        "name TEXT,",
+        "ownerId INTEGER,",
+        "FOREIGN KEY(ownerId) REFERENCES user(id))"
+        ]
+    },
+    { "name" : "match",
+      "sql" : [
+        "CREATE TABLE match",
+        "(id INTEGER PRIMARY KEY,",
+        "name TEXT,",
+        "homeTeamId INTEGER,",
+        "awayTeamId INTEGER,",
+        "homeTeamScore INTEGER,",
+        "awayTeamScore INTEGER,",
+        "played INTEGER)"
+        ]
+    },
+    { "name" : "fixture",
+      "sql" : [
+        "CREATE TABLE fixture",
+        "(id INTEGER PRIMARY KEY,",
+        "name TEXT)"
+        ]
+    },
+    { "name" : "fixtureMatch",
+      "sql" : [
+        "CREATE TABLE fixtureMatch",
+        "(fixtureId INTEGER,",
+        "matchId INTEGER,",
+        "FOREIGN KEY(fixtureId) REFERENCES fixture(id),",
+        "FOREIGN KEY(matchId) REFERENCES match(id))"
+        ]
+    },
+    { "name" : "stage",
+      "sql" : [
+        "CREATE TABLE stage",
+        "(id INTEGER PRIMARY KEY,",
+        "type TEXT,",
+        "legs INTEGER,",
+        "finished INTEGER,",
+        "currentFixture INTEGER)"
+        ]
+    },
+    { "name" : "stageFixture",
+      "sql" : [
+        "CREATE TABLE stageFixture",
+        "(stageId INTEGER,",
+        "fixtureId INTEGER,",
+        "ordern INTEGER,",
+        "FOREIGN KEY(stageId) REFERENCES stage(id),",
+        "FOREIGN KEY(fixtureId) REFERENCES fixture(id))"
+        ]
+    },
+    { "name" : "stageTeam",
+      "sql" : [
+        "CREATE TABLE stageTeam",
+        "(stageId INTEGER,",
+        "teamId INTEGER,",
+        "FOREIGN KEY(stageId) REFERENCES stage(id),",
+        "FOREIGN KEY(teamId) REFERENCES team(id))"
+        ]
+    },
+    { "name" : "competition",
+      "sql" : [
+        "CREATE TABLE competition",
+        "(id INTEGER PRIMARY KEY,",
+        "name TEXT,",
+        "ownerId INTEGER,",
+        "FOREIGN KEY(ownerId) REFERENCES user(id))"
+        ]
+    },
+    { "name" : "competitionStage",
+      "sql" : [
+        "CREATE TABLE competitionStage",
+        "(competitionId INTEGER,",
+        "stageId INTEGER,",
+        "ordern INTEGER,",
+        "FOREIGN KEY(competitionId) REFERENCES competition(id),",
+        "FOREIGN KEY(stageId) REFERENCES stage(id))"
+        ]
+    },
+    { "name" : "competitionTeam",
+      "sql" : [
+        "CREATE TABLE competitionTeam",
+        "(competitionId INTEGER,",
+        "teamId INTEGER,",
+        "FOREIGN KEY(competitionId) REFERENCES competition(id),",
+        "FOREIGN KEY(teamId) REFERENCES team(id))"
+        ]
+    }
+]

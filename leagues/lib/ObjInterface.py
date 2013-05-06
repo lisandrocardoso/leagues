@@ -28,7 +28,7 @@ class ObjInterface():
         fixtures = {}
 
         for i in range(0, draft.data.get('legs')):
-            
+
 #        self.data['current_fixture'] = 0
 
         result_teams = draft.teams

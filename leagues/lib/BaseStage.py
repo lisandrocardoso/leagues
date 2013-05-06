@@ -38,7 +38,7 @@ class BaseStage(BaseObject):
     def del_fixture_by_fixture_id(self, fixtureId):
         orderId = self.get_order_id_by_fixture_id(fixtureId)
         self.del_fixture_by_order_id(orderId)
-        
+
     def del_fixture_by_order_id(self, orderId):
         if self.fixtures.get(orderId, None):
             del self.fixtures[orderId]
