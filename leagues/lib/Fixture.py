@@ -3,10 +3,14 @@
 from BaseObject import BaseObject
 
 
+# Fixture(name, < matches = [], stageId = 0 >)
 class Fixture(BaseObject):
 
     def set_up(self, **kwargs):
-        self.matches = set()
+        self.matches = set(kwargs.get('matches', []))
+
+        self.stage_id = kwargs.get('stageId', 0)
+        
         self.unmatched_teams = set()
 
     def add_match(self, matchId):

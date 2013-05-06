@@ -4,11 +4,14 @@
 from BaseObject import BaseObject
 
 
+# BaseStage(id, name, < teams = [], competitionId > )
 class BaseStage(BaseObject):
 
     def set_up(self, **kwargs):
-        self.teams = kwargs.get('teams', set())
+        self.teams = set(kwargs.get('teams', []))
         self.fixtures = {}
+
+        self.competitionID = kwargs.get('competitionId', 0)
 
         self.data = {}
 

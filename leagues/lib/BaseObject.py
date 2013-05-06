@@ -3,7 +3,7 @@
 
 class BaseObject(object):
 
-    def __init__(self, ID=None, name="NoName", **kwargs):
+    def __init__(self, ID=-1, name="NoName", **kwargs):
         self.name = name
         self.ID = ID
         self.set_up(**kwargs)
