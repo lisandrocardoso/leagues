@@ -1,6 +1,7 @@
 [
 { "comment" : " USER QUERIES " },
     { "name" : "create_user",
+      "type" : "insert",
       "sql" : [
         "INSERT INTO user VALUES",
         "(NULL,",
@@ -9,12 +10,14 @@
         ]
     },
     { "name" : "get_user",
+      "type" : "select",
       "sql" : [
         "SELECT * FROM user WHERE",
         "id = ?"
         ]
     },
     { "name" : "update_user_password",
+      "type" : "update",
       "sql" : [
         "UPDATE user SET",
         "password = ?",
@@ -23,6 +26,7 @@
     },
 { "comment" : " TEAM QUERIES " },
     { "name" : "create_team",
+      "type" : "insert",
       "sql" : [
         "INSERT INTO team VALUES",
         "(NULL,",
@@ -31,6 +35,7 @@
         ]
     },
     { "name" : "get_team",
+      "type" : "select",
       "sql" : [
         "SELECT * FROM team WHERE",
         "id = ?"
@@ -38,6 +43,7 @@
     },
 { "comment" : " MATCH QUERIES " },
     { "name" : "create_match",
+      "type" : "insert",
       "sql" : [
         "INSERT INTO match VALUES",
         "(NULL,",
@@ -50,35 +56,40 @@
         ]
     },
     { "name" : "get_match",
+      "type" : "select",
       "sql" : [
         "SELECT * FROM match WHERE",
         "id = ?"
         ]
     },
     { "name" : "update_match_scores",
+      "type" : "update",
       "sql" : [
         "UPDATE match SET",
         "homeTeamScore = ?,",
         "awayTeamScore = ?,",
-        "played = 1"
+        "played = 1",
         "where id = ?"
         ]
     },
 { "comment" : " FIXTURE QUERIES " },
     { "name" : "create_fixture",
+      "type" : "insert",
       "sql" : [
         "INSERT INTO fixture VALUES",
         "(NULL,",
         "?)"
         ]
     },
-    { "name" : "get_fixture",
+    { "name" : "get_fexture",
+      "type" : "select",
       "sql" : [
         "SELECT * FROM fixture WHERE",
         "id = ?"
         ]
     },
     { "name" : "create_fixtureMatch",
+      "type" : "insert",
       "sql" : [
         "INSERT INTO fixtureMatch VALUES",
         "(?,",
@@ -86,6 +97,7 @@
         ]
     },
     { "name" : "get_fixture_matches",
+      "type" : "select",
       "sql" : [
         "SELECT matchId FROM fixture WHERE",
         "fixtureId = ?"
@@ -93,6 +105,7 @@
     },
 { "comment" : " STAGE QUERIES " },
     { "name" : "create_stage",
+      "type" : "insert",
       "sql" : [
         "INSERT INTO stage VALUES",
         "(NULL,",
@@ -102,51 +115,88 @@
         "0)"
         ]
     },
-    { "name" : "stageFixture",
+    { "name" : "get_stage",
+      "type" : "select",
       "sql" : [
-        "CREATE TABLE stageFixture",
-        "(stageId INTEGER,",
-        "fixtureId INTEGER,",
-        "ordern INTEGER,",
-        "FOREIGN KEY(stageId) REFERENCES stage(id),",
-        "FOREIGN KEY(fixtureId) REFERENCES fixture(id))"
+        "SELECT * FROM stage WHERE",
+        "id = ?"
         ]
     },
-    { "name" : "stageTeam",
+    { "name" : "create_stageFixture",
+      "type" : "insert",
       "sql" : [
-        "CREATE TABLE stageTeam",
-        "(stageId INTEGER,",
-        "teamId INTEGER,",
-        "FOREIGN KEY(stageId) REFERENCES stage(id),",
-        "FOREIGN KEY(teamId) REFERENCES team(id))"
+        "INSERT INTO stageFixture VALUES",
+        "(?,",
+        "?)"
         ]
     },
-    { "name" : "competition",
+    { "name" : "get_stage_fixtures",
+      "type" : "select",
       "sql" : [
-        "CREATE TABLE competition",
-        "(id INTEGER PRIMARY KEY,",
-        "name TEXT,",
-        "ownerId INTEGER,",
-        "FOREIGN KEY(ownerId) REFERENCES user(id))"
+        "SELECT fixtureId FROM stageFixture WHERE",
+        "stageId = ?"
         ]
     },
-    { "name" : "competitionStage",
+    { "name" : "create_stageTeam",
+      "type" : "insert",
       "sql" : [
-        "CREATE TABLE competitionStage",
-        "(competitionId INTEGER,",
-        "stageId INTEGER,",
-        "ordern INTEGER,",
-        "FOREIGN KEY(competitionId) REFERENCES competition(id),",
-        "FOREIGN KEY(stageId) REFERENCES stage(id))"
+        "INSERT INTO stageTeam VALUES",
+        "(?,",
+        "?)"
         ]
     },
-    { "name" : "competitionTeam",
+    { "name" : "get_stage_teams",
+      "type" : "select",
       "sql" : [
-        "CREATE TABLE competitionTeam",
-        "(competitionId INTEGER,",
-        "teamId INTEGER,",
-        "FOREIGN KEY(competitionId) REFERENCES competition(id),",
-        "FOREIGN KEY(teamId) REFERENCES team(id))"
+        "SELECT teamId from stageTeam WHERE",
+        "stageId = ?"
+        ]
+    },
+{ "comment" : " COMPETITION QUERIES " },
+    { "name" : "create_competition",
+      "type" : "insert",
+      "sql" : [
+        "INSERTO INTO competition VALUES",
+        "(NULL,",
+        "?,",
+        "?)"
+        ]
+    },
+    { "name" : "get_competition",
+      "type" : "select",
+      "sql" : [
+        "SELECT * FROM competition WHERE",
+        "id = ?"
+        ]
+    },
+    { "name" : "create_competitionStage",
+      "type" : "insert",
+      "sql" : [
+        "INSERT INTO competitionStage VALUES",
+        "(?,",
+        "?)"
+        ]
+    },
+    { "name" : "get_competitionStage",
+      "type" : "select",
+      "sql" : [
+        "SELECT stageId FROM competitionStage WHERE",
+        "competitionId = ?"
+        ]
+    },
+    { "name" : "create_competitionTeam",
+      "type" : "insert",
+      "sql" : [
+        "INSERT INTO competitionTeam VALUES",
+        "(?,",
+        "?)"
+        ]
+    },
+    { "name" : "get_competitionTeam",
+      "type" : "select",
+      "sql" : [
+        "SELECT teamId FROM competitionTeam WHERE",
+        "competitionId = ?"
         ]
     }
 ]

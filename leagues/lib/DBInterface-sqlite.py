@@ -12,18 +12,44 @@ from pprint import pprint
 
 class DBInterfaceSQLite():
 
-    def __init__(self, dbfile):
+    def __init__(self, dbfile, configuration = {}):
 
         self.dbfile = dbfile
         self.connection = sqlite3.connect(dbfile)
+        self.cursor = self.connection.cursor()
 
-        self.queries = {}
+        self.queries = self.load_queries(configuration.get('dbfile', './queries-sqlite.json'))
 
-    def create_match(self):
-        # Insert a new match entry, return last_inserted_id
-        # Only for test purposes:
-        for i in range(0, 99999):
-            yield i
+    def load_queries(self, queries_file):
+        qr = []
+        with open(queries_file) as qf:
+            queries = json.load(qf)
+            # Remove 'comment' queries
+            for q in queries:
+                if q.has_key('name'):
+                    qr.append(q)
+
+        return qr
+
+    def find_query(self, query_name):
+        for q in self.queries:
+            if q.get('name', '') == query_name:
+                return q
+
+        return {}
+
+    def run_query(self, query_name, qargs):
+        query = self.find_query(query_name)
+        sql = ' '.join(query.get('sql', ''))
+        qtype = query.get('type')
+
+        self.cursor.execute(sql, qargs)
+
+        if qtype == 'select':
+            return self.cursor.fetchall()
+        elif qtype == 'insert':
+            self.connection.commit()
+            return self.cursor.lastrowid
 
     def setup_tables(self):
         cursor = self.connection.cursor()
@@ -33,48 +59,12 @@ class DBInterfaceSQLite():
 
             for query in queries:
                 name = query.get('name')
-                sql = ''.join(query.get('sql'))
-
-                print sql
+                sql = ' '.join(query.get('sql'))
 
                 cursor.execute(sql)
 
         self.connection.commit()
 
-    def create_user(self, username, password):
-        pass
-
-    def test_tables(self):
-        cursor = self.connection.cursor()
-
-        for i in range(101, 200):
-            cursor.execute("""
-                INSERT INTO match VALUES(
-                    NULL,
-                    ?,
-                    NULL,
-                    NULL,
-                    0,
-                    0,
-                    0)
-            """, ("name" + str(i), ))
-
-        for i in range(0, 100):
-            cursor.execute("""
-                INSERT INTO fixture VALUES(
-                    NULL,
-                    NULL)
-            """)
-
-        for fId in range(0, 100):
-            for mId in range(101, 200):
-                cursor.execute("""
-                    INSERT INTO fixtureMatch VALUES(
-                        ?,
-                        ?)
-            """, (fId, mId))
-
-        self.connection.commit()
 
 ### Test suite
 
@@ -82,4 +72,9 @@ db = DBInterfaceSQLite('testdbp')
 
 db.setup_tables()
 
-#db.test_tables()
+print db.run_query('create_user', ('pepe', 'password',))
+print db.run_query('create_user', ('pepe2', 'password',))
+print db.run_query('create_user', ('pepe4', 'password',))
+
+print db.run_query('get_user', (1,))
+print db.run_query('get_user', (3,))
