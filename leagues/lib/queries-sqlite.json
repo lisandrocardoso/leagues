@@ -1,4 +1,5 @@
 [
+{ "comment" : " USER QUERIES " },
     { "name" : "create_user",
       "sql" : [
         "INSERT INTO user VALUES",
@@ -7,6 +8,20 @@
         "?)"
         ]
     },
+    { "name" : "get_user",
+      "sql" : [
+        "SELECT * FROM user WHERE",
+        "id = ?"
+        ]
+    },
+    { "name" : "update_user_password",
+      "sql" : [
+        "UPDATE user SET",
+        "password = ?",
+        "WHERE id = ?"
+        ]
+    },
+{ "comment" : " TEAM QUERIES " },
     { "name" : "create_team",
       "sql" : [
         "INSERT INTO team VALUES",
@@ -15,6 +30,13 @@
         "?)"
         ]
     },
+    { "name" : "get_team",
+      "sql" : [
+        "SELECT * FROM team WHERE",
+        "id = ?"
+        ]
+    },
+{ "comment" : " MATCH QUERIES " },
     { "name" : "create_match",
       "sql" : [
         "INSERT INTO match VALUES",
@@ -27,11 +49,33 @@
         "0)"
         ]
     },
+    { "name" : "get_match",
+      "sql" : [
+        "SELECT * FROM match WHERE",
+        "id = ?"
+        ]
+    },
+    { "name" : "update_match_scores",
+      "sql" : [
+        "UPDATE match SET",
+        "homeTeamScore = ?,",
+        "awayTeamScore = ?,",
+        "played = 1"
+        "where id = ?"
+        ]
+    },
+{ "comment" : " FIXTURE QUERIES " },
     { "name" : "create_fixture",
       "sql" : [
         "INSERT INTO fixture VALUES",
         "(NULL,",
         "?)"
+        ]
+    },
+    { "name" : "get_fixture",
+      "sql" : [
+        "SELECT * FROM fixture WHERE",
+        "id = ?"
         ]
     },
     { "name" : "create_fixtureMatch",
@@ -41,6 +85,13 @@
         "?)"
         ]
     },
+    { "name" : "get_fixture_matches",
+      "sql" : [
+        "SELECT matchId FROM fixture WHERE",
+        "fixtureId = ?"
+        ]
+    },
+{ "comment" : " STAGE QUERIES " },
     { "name" : "create_stage",
       "sql" : [
         "INSERT INTO stage VALUES",
