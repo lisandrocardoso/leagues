@@ -16,6 +16,7 @@ class DBInterfaceSQLite():
 
         self.dbfile = dbfile
         self.connection = sqlite3.connect(dbfile)
+        self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
 
         self.queries = self.load_queries(configuration.get('dbfile', './queries-sqlite.json'))
@@ -43,6 +44,7 @@ class DBInterfaceSQLite():
         sql = ' '.join(query.get('sql', ''))
         qtype = query.get('type')
 
+        print self.cursor.description
         self.cursor.execute(sql, qargs)
 
         if qtype == 'select':
@@ -68,13 +70,13 @@ class DBInterfaceSQLite():
 
 ### Test suite
 
-db = DBInterfaceSQLite('testdbp')
+#db = DBInterfaceSQLite('testdbp')
 
-db.setup_tables()
+#db.setup_tables()
 
-print db.run_query('create_user', ('pepe', 'password',))
-print db.run_query('create_user', ('pepe2', 'password',))
-print db.run_query('create_user', ('pepe4', 'password',))
+#print db.run_query('create_user', ('pepe', 'password',))
+#print db.run_query('create_user', ('pepe2', 'password',))
+#print db.run_query('create_user', ('pepe4', 'password',))
 
-print db.run_query('get_user', (1,))
-print db.run_query('get_user', (3,))
+#print db.run_query('get_user', (1,))
+#print db.run_query('get_user', (3,))

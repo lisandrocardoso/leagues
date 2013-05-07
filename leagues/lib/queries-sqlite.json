@@ -9,11 +9,18 @@
         "?)"
         ]
     },
-    { "name" : "get_user",
+    { "name" : "get_user_by_id",
       "type" : "select",
       "sql" : [
         "SELECT * FROM user WHERE",
         "id = ?"
+        ]
+    },
+    { "name" : "get_user_by_name",
+      "type" : "select",
+      "sql" : [
+        "SELECT * FROM user WHERE",
+        "name = ?"
         ]
     },
     { "name" : "update_user_password",

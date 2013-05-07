@@ -1,43 +1,68 @@
 # -*- coding: utf-8 -*-
 
-from DBInterface import DBInterface
+import hashlib
+
+from DBInterfaceSQLite import DBInterfaceSQLite
 
 from Draft import Draft
 from Fixture import Fixture
 from Match import Match
 from Team import Team
+from User import User
+
+from pprint import pprint
 
 import Tools
 
 class ObjInterface():
 
     def __init__(self):
-        super(ObjInterface, self).__init__()
+        self.storage = {
+            'user' : {},
+            'team' : {},
+            'match' : {},
+            'fixture' : {},
+            'stage' : {},
+            'competition' : {}
+            }
 
-   #def generate_seeded_draft_fixtures
-    def generate_random_draft_fixtures(self, draftId):
-        # Load object from DB with ID
-        draft = DBInterface.load_draft(draftId)
+        self.db = DBInterfaceSQLite('testdb')
 
-        if not draft.teams:
-            return False
+# User interface toolset
 
-        if draft.fixtures:
-            return False
+    def create_user(self, name, password):
+        sha1 = hashlib.sha1()
+        sha1.update(password)
 
-        fixtures = {}
+        enc_password = sha1.hexdigest()
 
-        for i in range(0, draft.data.get('legs')):
+        oid = self.db.run_query('create_user', (name, enc_password,))
+        obj = User(oid, name)
 
-#        self.data['current_fixture'] = 0
+        self.storage['user'][oid] = obj
 
-        result_teams = draft.teams
+    def load_user_name(self, name):
+        ret = self.db.run_query('get_user_by_name', (name,))
 
-        while len(result_teams):
-            (picked_teams, result_teams) = Tools.pick_random(teams, 2)
-            if len(picked_teams) == 1:
-                unmatched_team = picked_teams[0]
-            else:
-                matchId = DBInterface.create_match()
+        return User(ret[0][0], ret[0][1])
 
+
+    def load_user_id(self, uid):
+        ret = self.db.run_query('get_user_by_id', (uid,))
+
+        return User(ret[0][0], ret[0][1])
+
+    def get_user(self, uid):
+        return self.storage['user'][uid]
+
+
+oi = ObjInterface()
+
+oi.db.setup_tables()
+
+oi.create_user('pepe', 'password')
+
+oi.load_user_name('pepe')
+
+oi.load_user_id(1)
 
