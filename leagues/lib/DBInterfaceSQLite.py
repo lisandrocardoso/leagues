@@ -12,14 +12,14 @@ from pprint import pprint
 
 class DBInterfaceSQLite():
 
-    def __init__(self, dbfile, configuration = {}):
-
+    def __init__(self, dbfile, configuration={}):
         self.dbfile = dbfile
         self.connection = sqlite3.connect(dbfile)
         self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
 
-        self.queries = self.load_queries(configuration.get('dbfile', './queries-sqlite.json'))
+        self.queries = self.load_queries(configuration.get('dbfile',
+            './queries-sqlite.json'))
 
     def load_queries(self, queries_file):
         qr = []
@@ -27,7 +27,7 @@ class DBInterfaceSQLite():
             queries = json.load(qf)
             # Remove 'comment' queries
             for q in queries:
-                if q.has_key('name'):
+                if 'name' in q:
                     qr.append(q)
 
         return qr
@@ -39,16 +39,30 @@ class DBInterfaceSQLite():
 
         return {}
 
+    def return_headed(self):
+        result = self.cursor.fetchall()
+        hr = self.cursor.description
+
+        headers = [h[0] for h in hr]
+
+        d = []
+        for r in result:
+            d.append(dict(zip(headers, r)))
+
+        if len(d) == 1:
+            return d[0]
+        else:
+            return d
+
     def run_query(self, query_name, qargs):
         query = self.find_query(query_name)
         sql = ' '.join(query.get('sql', ''))
         qtype = query.get('type')
 
-        print self.cursor.description
         self.cursor.execute(sql, qargs)
 
         if qtype == 'select':
-            return self.cursor.fetchall()
+            return self.return_headed()
         elif qtype == 'insert':
             self.connection.commit()
             return self.cursor.lastrowid
@@ -68,15 +82,3 @@ class DBInterfaceSQLite():
         self.connection.commit()
 
 
-### Test suite
-
-#db = DBInterfaceSQLite('testdbp')
-
-#db.setup_tables()
-
-#print db.run_query('create_user', ('pepe', 'password',))
-#print db.run_query('create_user', ('pepe2', 'password',))
-#print db.run_query('create_user', ('pepe4', 'password',))
-
-#print db.run_query('get_user', (1,))
-#print db.run_query('get_user', (3,))
