@@ -8,8 +8,8 @@ class Match(BaseObject):
         self.home_id = kwargs.get('home_id')
         self.away_id = kwargs.get('away_id')
         self.data = {}
-        self.data['score'] = {'home' : 0,
-                              'away' : 0}
+        self.data['score'] = {'home': 0,
+                              'away': 0}
         self.data['winner'] = 0
         self.data['home_win'] = False
         self.data['away_win'] = False
@@ -38,14 +38,14 @@ class Match(BaseObject):
             self.data['winner'] = self.home_id
             self.data['home_win'] = True
             self.data['away_win'] = self.data['drawn'] = False
-            self.data['point_diff'] = ( self.data['score']['home'] - 
-                                        self.data['score']['away'] )
+            self.data['point_diff'] = (self.data['score']['home'] -
+                                       self.data['score']['away'])
         elif self.data['score']['home'] < self.data['score']['away']:
             self.data['winner'] = self.away_id
             self.data['away_win'] = True
             self.data['home_win'] = self.data['drawn'] = False
-            self.data['point_diff'] = ( self.data['score']['away'] - 
-                                        self.data['score']['home'] )
+            self.data['point_diff'] = (self.data['score']['away'] -
+                                       self.data['score']['home'])
         else:
             self.data['winner'] = 0
             self.data['away_win'] = self.data['home_win'] = False

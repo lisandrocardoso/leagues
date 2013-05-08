@@ -7,4 +7,4 @@ class Team(BaseObject):
 
     def set_up(self, **kwargs):
         # ownerID = userID
-        self.userID = kwargs.get(['userId'], -1)
+        self.userID = kwargs.get('user_id', -1)

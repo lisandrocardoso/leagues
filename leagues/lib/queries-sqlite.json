@@ -41,11 +41,18 @@
         "?)"
         ]
     },
-    { "name" : "get_team",
+    { "name" : "get_team_by_id",
       "type" : "select",
       "sql" : [
         "SELECT * FROM team WHERE",
         "id = ?"
+        ]
+    },
+    { "name" : "get_team_by_name",
+      "type" : "select",
+      "sql" : [
+        "SELECT * FROM team WHERE",
+        "name = ?"
         ]
     },
 { "comment" : " MATCH QUERIES " },
@@ -62,11 +69,19 @@
         "0)"
         ]
     },
-    { "name" : "get_match",
+    { "name" : "get_match_by_id",
       "type" : "select",
       "sql" : [
         "SELECT * FROM match WHERE",
         "id = ?"
+        ]
+    },
+    { "name" : "get_match_by_team",
+      "type" : "select",
+      "sql" : [
+        "SELECT * FROM match WHERE",
+        "homeTeamId = ? OR",
+        "awayTeamId = ?"
         ]
     },
     { "name" : "update_match_scores",

@@ -10,6 +10,7 @@ from Team import Team
 
 from pprint import pprint
 
+
 class DBInterfaceSQLite():
 
     def __init__(self, dbfile, configuration={}):
@@ -49,10 +50,7 @@ class DBInterfaceSQLite():
         for r in result:
             d.append(dict(zip(headers, r)))
 
-        if len(d) == 1:
-            return d[0]
-        else:
-            return d
+        return d
 
     def run_query(self, query_name, qargs):
         query = self.find_query(query_name)
