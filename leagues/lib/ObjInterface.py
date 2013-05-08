@@ -63,12 +63,14 @@ class ObjInterface():
         sha1.update(password)
         enc_password = sha1.hexdigest()
 
-        ret = self.db.run_query('get_user_by_name', (name,))
+        ret = self.db.run_query('get_user_by_name', (name,))[0]
         if ret['password'] == enc_password:
             u = User(ret['id'], ret['name'])
             self.storage['user'][ret['id']] = u
 
             return u
+
+        return None
 
 # Team interface toolset
 
@@ -81,7 +83,7 @@ class ObjInterface():
         return t
 
     def load_team_id(self, tid):
-        ret = self.db.run_query('get_team_by_id', (tid,))
+        ret = self.db.run_query('get_team_by_id', (tid,))[0]
         t = Team(tid, ret['name'], ret['ownerId'])
         self.storage['team'][tid] = t
 
@@ -89,10 +91,13 @@ class ObjInterface():
 
     def load_team_name(self, name):
         ret = self.db.run_query('get_team_by_name', (name,))
-        t = Team(ret['id'], ret['name'], ret['ownerId'])
-        self.storage['team'][ret['id']] = t
+        teams = []
+        for row in ret:
+            t = Team(row['id'], row['name'], row['ownerId'])
+            self.storage['team'][row['id']] = t
+            teams.append(t)
 
-        return t
+        return teams
 
     def get_team(self, tid):
         return self.storage['team'].get('tid', None)
@@ -109,7 +114,7 @@ class ObjInterface():
         return m
 
     def load_match_id(self, mid):
-        ret = self.db.run_query('get_match_by_id', (mid,))
+        ret = self.db.run_query('get_match_by_id', (mid,))[0]
         m = Match(mid, ret['name'],
             home_id=ret['homeTeamId'],
             away_id=ret['awayTeamId'])
@@ -119,13 +124,15 @@ class ObjInterface():
 
     def load_match_team(self, tid):
         ret = self.db.run_query('get_match_by_team', (tid, tid, ))
-        print ret
-        m = Match(ret['id'], ret['name'],
-            home_id=ret['homeTeamId'],
-            away_id=ret['awayTeamId'])
-        self.storage['match'][m.get_ID()] = m
+        matches = []
+        for row in ret:
+            m = Match(row['id'], row['name'],
+                home_id=row['homeTeamId'],
+                away_id=row['awayTeamId'])
+            self.storage['match'][m.get_ID()] = m
+            matches.append(m)
 
-        return m
+        return matches
 
     def get_match(self, mid):
         return self.storage['match'].get('mid', None)
@@ -160,4 +167,5 @@ if __name__ == "__main__":
 
     print oi.load_match_id(1)
 
-    print oi.load_match_team(2)
+    for match in oi.load_match_team(2):
+        print match.get_name()
