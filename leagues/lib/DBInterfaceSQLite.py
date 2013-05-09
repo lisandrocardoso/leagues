@@ -2,6 +2,7 @@
 
 import sqlite3
 import json
+import os
 
 from Draft import Draft
 from Fixture import Fixture
@@ -21,6 +22,11 @@ class DBInterfaceSQLite():
 
         self.queries = self.load_queries(configuration.get('dbfile',
             './queries-sqlite.json'))
+
+    def terminate(self, remove=False):
+        self.connection.close()
+        if remove:
+            os.unlink(self.dbfile)
 
     def load_queries(self, queries_file):
         qr = []
@@ -78,5 +84,3 @@ class DBInterfaceSQLite():
                 cursor.execute(sql)
 
         self.connection.commit()
-
-

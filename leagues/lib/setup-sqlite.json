@@ -7,6 +7,24 @@
         "password TEXT)"
         ]
     },
+    { "name" : "userCompetition",
+      "sql" : [
+        "CREATE TABLE userCompetition",
+        "(userId INTEGER,",
+        "competitionId INTEGER,",
+        "FOREIGN KEY(userId) REFERENCES user(id),",
+        "FOREIGN KEY(competitionId) REFERENCES competition(id))"
+        ]
+    },
+    { "name" : "userTeam",
+      "sql" : [
+        "CREATE TABLE userTeam",
+        "(userId INTEGER,",
+        "teamId INTEGER,",
+        "FOREIGN KEY(userId) REFERENCES user(id),",
+        "FOREIGN KEY(teamId) REFERENCES team(id))"
+        ]
+    },
     { "name" : "team",
       "sql" : [
         "CREATE TABLE team",

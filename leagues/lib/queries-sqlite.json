@@ -23,6 +23,36 @@
         "name = ?"
         ]
     },
+    { "name" : "create_user_competition",
+      "type" : "insert",
+      "sql" : [
+        "INSERT INTO userCompetition VALUES",
+        "(?,",
+        "?)"
+        ]
+    },
+    { "name" : "get_user_competitions",
+      "type" : "select",
+      "sql" : [
+        "SELECT competitionId FROM userCompetition WHERE",
+        "userId = ?"
+        ]
+    },
+    { "name" : "create_user_team",
+      "type" : "insert",
+      "sql" : [
+        "INSERT INTO userTeam VALUES",
+        "(?,",
+        "?)"
+        ]
+    },
+    { "name" : "get_user_teams",
+      "type" : "select",
+      "sql" : [
+        "SELECT teamId FROM userTeam WHERE",
+        "userId = ?"
+        ]
+    },
     { "name" : "update_user_password",
       "type" : "update",
       "sql" : [
@@ -103,14 +133,14 @@
         "?)"
         ]
     },
-    { "name" : "get_fexture",
+    { "name" : "get_fixture_by_id",
       "type" : "select",
       "sql" : [
         "SELECT * FROM fixture WHERE",
         "id = ?"
         ]
     },
-    { "name" : "create_fixtureMatch",
+    { "name" : "create_fixture_match",
       "type" : "insert",
       "sql" : [
         "INSERT INTO fixtureMatch VALUES",
@@ -137,14 +167,14 @@
         "0)"
         ]
     },
-    { "name" : "get_stage",
+    { "name" : "get_stage_by_id",
       "type" : "select",
       "sql" : [
         "SELECT * FROM stage WHERE",
         "id = ?"
         ]
     },
-    { "name" : "create_stageFixture",
+    { "name" : "create_stage_fixture",
       "type" : "insert",
       "sql" : [
         "INSERT INTO stageFixture VALUES",
@@ -159,7 +189,7 @@
         "stageId = ?"
         ]
     },
-    { "name" : "create_stageTeam",
+    { "name" : "create_stage_team",
       "type" : "insert",
       "sql" : [
         "INSERT INTO stageTeam VALUES",
@@ -191,7 +221,7 @@
         "id = ?"
         ]
     },
-    { "name" : "create_competitionStage",
+    { "name" : "create_competition_stage",
       "type" : "insert",
       "sql" : [
         "INSERT INTO competitionStage VALUES",
@@ -199,14 +229,14 @@
         "?)"
         ]
     },
-    { "name" : "get_competitionStage",
+    { "name" : "get_competition_stage",
       "type" : "select",
       "sql" : [
         "SELECT stageId FROM competitionStage WHERE",
         "competitionId = ?"
         ]
     },
-    { "name" : "create_competitionTeam",
+    { "name" : "create_competition_team",
       "type" : "insert",
       "sql" : [
         "INSERT INTO competitionTeam VALUES",
@@ -214,7 +244,7 @@
         "?)"
         ]
     },
-    { "name" : "get_competitionTeam",
+    { "name" : "get_competition_team",
       "type" : "select",
       "sql" : [
         "SELECT teamId FROM competitionTeam WHERE",
