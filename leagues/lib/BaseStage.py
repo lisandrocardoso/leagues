@@ -9,6 +9,7 @@ class BaseStage(BaseObject):
 
     def set_up(self, **kwargs):
         self.teams = set(kwargs.get('teams', []))
+        self.stype = kwargs.get('stype')
         self.fixtures = {}
 
         self.competitionID = kwargs.get('competitionId', 0)

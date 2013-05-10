@@ -151,7 +151,7 @@
     { "name" : "get_fixture_matches",
       "type" : "select",
       "sql" : [
-        "SELECT matchId FROM fixture WHERE",
+        "SELECT matchId FROM fixtureMatch WHERE",
         "fixtureId = ?"
         ]
     },

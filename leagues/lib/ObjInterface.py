@@ -168,27 +168,88 @@ class ObjInterface():
 
         return f
 
-    def create_fixture_match(self, fid, mid):
-        rid = self.db.run_query('create_fixture_match',
-            (fid, mid, ))
-
-    def load_fixture_id(self, fid):
+    def get_fixture_by_id(self, fid):
         ret = self.db.run_query('get_fixture_by_id', (fid, ))[0]
         f = Fixture(fid, ret['name'])
         self.storage['fixture'][fid] = f
 
         return f
 
-    def load_fixture_matches(self, fid):
+    def create_fixture_match(self, fid, mid):
+        rid = self.db.run_query('create_fixture_match',
+            (fid, mid, ))
+
+    def get_fixture_match_ids(self, fid):
         ret = self.db.run_query('get_fixture_matches')
         matches = []
         for row in ret:
-            matches.append(self.load_match_id(row))
+            matches.append(ret['matchId'])
 
         return matches
 
     def get_fixture(self, fid):
         return self.storage['fixture'].get('fid', None)
+
+# Stage interface toolset
+
+    def create_stage(self, name, stype):
+        sid = self.db.run_query('create_stage',
+            (name, stype, ))
+        s = Stage(sid, name, stype)
+
+        self.storage['stage'][sid] = s
+
+        return s
+
+    def get_stage_by_id(self, sid):
+        ret = self.db.run_query('get_stage_by_id', (sid, ))[0]
+        stype = ret['type']
+        if stype == 'draft':
+            s = Draft(sid, ret['name'], 'stype'=stype)
+        elif stype == 'group':
+            s = Group(sid, ret['name'], 'stype'=stype)
+
+        self.storage['stage'][sid] = s
+
+        return s
+
+    def create_stage_fixture(self, sid, fid):
+        rid = self.db.run_query('create_stage_fixture',
+            (sid, fid, ))
+
+    def get_stage_fixture_ids(self, sid):
+        ret = self.db.run_query('get_stage_fixtures',
+            (sid, ))
+        fixtures = []
+        for row in ret:
+            fixtures.append(ret['fixtureId'])
+
+        return fixtures
+
+    def create_stage_team(self, sid, tid):
+        rid = self.db.run_query('create_stage_team',
+            (sid, tid, ))
+
+    def get_stage_team_ids(self, sid):
+        ret = self.db.run_query('get_stage_teams',
+            (sid, ))
+        teams = []
+        for row in ret:
+            teams.append(ret['teamId'])
+
+        return teams
+
+# Competition interface toolset
+
+    def create_competition(self, name):
+        cid = self.db.run_query('create_competition',
+            (name, ))
+        c = Competition(cid, name)
+
+        self.storage['stage'][sid] = s
+
+        return c
+
 
 if __name__ == "__main__":
     oi = ObjInterface()
