@@ -7,9 +7,9 @@ class Match(BaseObject):
     def set_up(self, **kwargs):
         self.home_id = kwargs.get('home_id')
         self.away_id = kwargs.get('away_id')
-        self.data = {}
-        self.data['score'] = {'home': 0,
-                              'away': 0}
+
+        self.data['home_score'] = 0
+        self.data['away:score'] = 0
         self.data['winner'] = 0
         self.data['home_win'] = False
         self.data['away_win'] = False
@@ -24,28 +24,28 @@ class Match(BaseObject):
         self.away_id = teamId
 
     def add_score(self, home=0, away=0):
-        self.data['score']['home'] += home
-        self.data['score']['away'] += away
+        self.data['home_score'] += home
+        self.data['away_score'] += away
 
     def set_score(self, home, away):
-        self.data['score']['home'] = home
-        self.data['score']['away'] = away
+        self.data['home_score'] = home
+        self.data['home_score'] = away
 
     def end_match(self):
         self.data['played'] = True
 
-        if self.data['score']['home'] > self.data['score']['away']:
+        if self.data['home_score'] > self.data['away_score']:
             self.data['winner'] = self.home_id
             self.data['home_win'] = True
             self.data['away_win'] = self.data['drawn'] = False
-            self.data['point_diff'] = (self.data['score']['home'] -
-                                       self.data['score']['away'])
-        elif self.data['score']['home'] < self.data['score']['away']:
+            self.data['point_diff'] = (self.data['home_score'] -
+                                       self.data['away_score'])
+        elif self.data['home_score'] < self.data['away_score']:
             self.data['winner'] = self.away_id
             self.data['away_win'] = True
             self.data['home_win'] = self.data['drawn'] = False
-            self.data['point_diff'] = (self.data['score']['away'] -
-                                       self.data['score']['home'])
+            self.data['point_diff'] = (self.data['away_score'] -
+                                       self.data['home_score'])
         else:
             self.data['winner'] = 0
             self.data['away_win'] = self.data['home_win'] = False
@@ -53,8 +53,6 @@ class Match(BaseObject):
             self.data['point_diff'] = 0
 
     def get_teams(self):
-        return (self.home_id, self.away_id)
-
-    def get_data(self):
-        return self.data
+        return { 'home_id': self.home_id,
+                 'away_id': self.away_id }
 

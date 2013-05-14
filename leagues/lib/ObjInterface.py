@@ -54,10 +54,6 @@ class ObjInterface():
     def save_to_storage(self, objtype, obj):
         if objtype in self.storage:
             oid = obj.get_ID()
-            if oid in self.storage[objtype]:
-                logging.debug('OI storage ' + objtype +
-                 " " + str(oid) + " exists")
-                return True
             self.storage[objtype][oid] = obj
             logging.debug('OI stored ' + objtype + " " + str(oid))
             return True
@@ -198,8 +194,8 @@ class ObjInterface():
 
     @oilogger
     def create_team(self, name, userId):
-        oid = self.db.run_query('create_team', (name, userId,))
-        t = Team(oid, name, user_id=userId)
+        tid = self.db.run_query('create_team', (name, userId,))
+        t = Team(tid, name, user_id=userId)
 
         self.save_to_storage('team', t)
 
@@ -249,6 +245,11 @@ class ObjInterface():
             home_id=ret['homeTeamId'],
             away_id=ret['awayTeamId'])
 
+        # Match-specific: played data fields completion
+        m.set_score(ret['homeTeamScore'], ret['awayTeamScore'])
+        if ret['played'] == 1:
+            m.end_match()
+
         self.save_to_storage('match', m)
 
         return m
@@ -261,6 +262,12 @@ class ObjInterface():
             m = Match(row['id'], row['name'],
                 home_id=row['homeTeamId'],
                 away_id=row['awayTeamId'])
+
+            # Match-specific: played data fields completion
+            m.set_score(ret['homeTeamScore'], ret['awayTeamScore'])
+            if ret['played'] == 1:
+                m.end_match()
+
             matches.append(m)
 
             self.save_to_storage('match', m)
@@ -287,6 +294,11 @@ class ObjInterface():
     def get_fixture_by_id(self, fid):
         ret = self.db.run_query('get_fixture_by_id', (fid, ))[0]
         f = Fixture(fid, ret['name'])
+
+        if ret['finished'] == 1:
+            f.set_data('finished', True)
+        elif ret['finished'] == 0:
+            f.set_data('finished', False)
 
         self.save_to_storage('fixture', fid)
 
@@ -333,7 +345,7 @@ class ObjInterface():
     def create_stage(self, name, stype):
         sid = self.db.run_query('create_stage',
             (name, stype, ))
-        s = Stage(sid, name, stype)
+        s = Stage(sid, name, stype=stype)
 
         self.save_to_storage('stage', s)
 
@@ -344,9 +356,16 @@ class ObjInterface():
         ret = self.db.run_query('get_stage_by_id', (sid, ))[0]
         stype = ret['type']
         if stype == 'draft':
-            s = Draft(sid, ret['name'], stype=stype)
+            s = Draft(sid, ret['name'], stype='draft')
         elif stype == 'group':
-            s = Group(sid, ret['name'], stype=stype)
+            s = Group(sid, ret['name'], stype='group')
+
+        if ret['finished'] == 1:
+            s.set_data('finished', True)
+        elif ret['finished'] == 0:
+            s.set_data('finished', False)
+
+        s.set_data('current_fixture', ret['current_fixture'])
 
         self.save_to_storage('stage', s)
 
@@ -385,11 +404,27 @@ class ObjInterface():
 # Competition interface toolset
 
     @oilogger
-    def create_competition(self, name):
+    def create_competition(self, name, userId, ctype):
         cid = self.db.run_query('create_competition',
-            (name, ))
-        c = Competition(cid, name)
+            (name, userId, ctype))
+        c = Competition(cid, name, user_id=userId, ctype=ctype)
 
-        self.save_to_storage('stage', c)
+        self.save_to_storage('competition', c)
 
         return c
+
+    @oilogger
+    def get_competition_by_id(self, cid):
+        ret = self.db.run_query('get_competition_by_id', (cid, ))[0]
+        ctype = ret['type']
+
+        if ctype == 'league':
+            c = League(cid, ret['name'], ret['ownerId'], 'league')
+
+        if ret['finished'] == 1:
+            c.set_data('finished', True)
+
+        c.set_data('current_stage', ret['current_stage'])
+
+
+

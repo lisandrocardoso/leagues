@@ -130,7 +130,8 @@
       "sql" : [
         "INSERT INTO fixture VALUES",
         "(NULL,",
-        "?)"
+        "?,",
+        "0)"
         ]
     },
     { "name" : "get_fixture_by_id",
@@ -211,7 +212,10 @@
         "INSERTO INTO competition VALUES",
         "(NULL,",
         "?,",
-        "?)"
+        "?,",
+        "?,",
+        "0,",
+        "0)"
         ]
     },
     { "name" : "get_competition",

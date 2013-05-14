@@ -6,6 +6,8 @@ class BaseObject(object):
     def __init__(self, ID=-1, name="NoName", **kwargs):
         self.name = name
         self.ID = ID
+        self.data = {}
+
         self.set_up(**kwargs)
 
     def set_up(self, args):
@@ -25,3 +27,11 @@ class BaseObject(object):
             return True
         else:
             return False
+
+    def set_data(self, data, value):
+        if data in self.data:
+            self.data[data] = value
+
+    def get_data(self):
+        return self.data
+

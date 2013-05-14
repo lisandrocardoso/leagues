@@ -8,15 +8,11 @@ from BaseObject import BaseObject
 class BaseStage(BaseObject):
 
     def set_up(self, **kwargs):
-        self.teams = set(kwargs.get('teams', []))
         self.stype = kwargs.get('stype')
-        self.fixtures = {}
 
-        self.competitionID = kwargs.get('competitionId', 0)
+        self.fixtures = []
+        self.teams = set()
 
-        self.data = {}
-
-        self.data['legs'] = kwargs.get('legs', 1)
         self.data['finished'] = False
         self.data['winners'] = []
         self.data['losers'] = []
@@ -24,28 +20,24 @@ class BaseStage(BaseObject):
 
 ### Fixture handling toolset
 
-    def get_new_key(self):
-        return len(self.fixtures.keys())
+    def add_fixture(self, fid):
+        if not fid in self.fixtures:
+            self.fixtures.append(fid)
+            return True
+        return False
 
-    def get_order_id_by_fixture_id(self, fixtureId):
-        for orderId in self.fixtures.keys():
-            if fixtureId == self.fixtures[orderId]:
-                return orderId
+    def get_fixture_by_order_id(self, oid):
+        if oid >= len(self.fixtures) or oid < 0:
+            return None
+        return self.fixtures[oid]
 
     def get_fixtures(self):
-        for i in self.fixtures.keys():
+        for i in self.fixtures:
             yield self.fixtures[i]
 
-    def add_fixture(self, fixtureId):
-        self.fixtures[self.get_new_key()] = fixtureId
-
-    def del_fixture_by_fixture_id(self, fixtureId):
-        orderId = self.get_order_id_by_fixture_id(fixtureId)
-        self.del_fixture_by_order_id(orderId)
-
-    def del_fixture_by_order_id(self, orderId):
-        if self.fixtures.get(orderId, None):
-            del self.fixtures[orderId]
+    def del_fixture(self, fid):
+        if fid in self.fixtures:
+            self.fixtures.remove(fid)
 
 ### Teams handling toolset
 

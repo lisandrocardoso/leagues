@@ -50,7 +50,8 @@
       "sql" : [
         "CREATE TABLE fixture",
         "(id INTEGER PRIMARY KEY,",
-        "name TEXT)"
+        "name TEXT,",
+        "finished INTEGER)"
         ]
     },
     { "name" : "fixtureMatch",
@@ -67,7 +68,6 @@
         "CREATE TABLE stage",
         "(id INTEGER PRIMARY KEY,",
         "type TEXT,",
-        "legs INTEGER,",
         "finished INTEGER,",
         "currentFixture INTEGER)"
         ]
@@ -97,6 +97,9 @@
         "(id INTEGER PRIMARY KEY,",
         "name TEXT,",
         "ownerId INTEGER,",
+        "type TEXT,",
+        "finished INTEGER,",
+        "current_stage INTEGER,",
         "FOREIGN KEY(ownerId) REFERENCES user(id))"
         ]
     },
