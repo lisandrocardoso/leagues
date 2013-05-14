@@ -14,14 +14,16 @@ from pprint import pprint
 
 class DBInterfaceSQLite():
 
-    def __init__(self, dbfile, configuration={}):
-        self.dbfile = dbfile
-        self.connection = sqlite3.connect(dbfile)
+    def __init__(self, configuration):
+
+        self.connection = sqlite3.connect(configuration.get('db_file'))
         self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
 
-        self.queries = self.load_queries(configuration.get('dbfile',
-            './queries-sqlite.json'))
+        self.dbfile = configuration.get('db_file')
+
+        self.queries = self.load_queries(configuration.get('queries_file'))
+        self.setup_queries_file = configuration.get('setup_queries_file')
 
     def terminate(self, remove=False):
         self.connection.close()
@@ -74,7 +76,7 @@ class DBInterfaceSQLite():
     def setup_tables(self):
         cursor = self.connection.cursor()
 
-        with open('setup-sqlite.json') as qf:
+        with open(self.setup_queries_file) as qf:
             queries = json.load(qf)
 
             for query in queries:

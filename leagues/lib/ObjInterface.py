@@ -34,7 +34,7 @@ def oilogger(func):
 
 class ObjInterface():
 
-    def __init__(self, configuration={}):
+    def __init__(self, configuration):
         logging.debug('OI Initiating Object Interface')
         self.storage = {
             'user': {},
@@ -45,10 +45,11 @@ class ObjInterface():
             'competition': {}
             }
 
-        self.dbtype = configuration.get('dbtype', 'sqlite')
+        self.dbtype = configuration.get('db_type')
+        print 'test'
         if self.dbtype == 'sqlite':
             logging.debug('OI Using sqlite interface')
-            self.db = DBInterfaceSQLite('testdb')
+            self.db = DBInterfaceSQLite(configuration.get('sqlite'))
 
     def save_to_storage(self, objtype, obj):
         if objtype in self.storage:

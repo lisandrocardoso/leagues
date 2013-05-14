@@ -10,7 +10,18 @@ if __name__ == "__main__":
     logformat = '%(asctime)s %(levelname)s %(message)s'
     logging.basicConfig(format=logformat, level=logging.DEBUG)
 
-    oi = ObjInterface()
+    config = {
+        'sqlite': {},
+        'db_type': 'sqlite'
+        }
+
+    config['sqlite'] = {
+        'db_file': 'tmp/dbfile',
+        'queries_file': 'sql/queries-sqlite.json',
+        'setup_queries_file': 'sql/setup-sqlite.json'
+        }
+
+    oi = ObjInterface(config)
 
     oi.db.setup_tables()
 
