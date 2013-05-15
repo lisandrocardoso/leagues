@@ -114,7 +114,7 @@
         "awayTeamId = ?"
         ]
     },
-    { "name" : "update_match_scores",
+    { "name" : "update_match_data",
       "type" : "update",
       "sql" : [
         "UPDATE match SET",
@@ -180,13 +180,14 @@
       "sql" : [
         "INSERT INTO stageFixture VALUES",
         "(?,",
+        "?,",
         "?)"
         ]
     },
     { "name" : "get_stage_fixtures",
       "type" : "select",
       "sql" : [
-        "SELECT fixtureId FROM stageFixture WHERE",
+        "SELECT fixtureId,ordern FROM stageFixture WHERE",
         "stageId = ?"
         ]
     },
@@ -203,6 +204,40 @@
       "sql" : [
         "SELECT teamId from stageTeam WHERE",
         "stageId = ?"
+        ]
+    },
+{ "comment" : " STAGEGROUP QUERIES " },
+    { "name" : "create_stage_group",
+      "type" : "insert",
+      "sql" : [
+        "INSERT INTO stageGroup VALUES",
+        "(NULL,",
+        "?,",
+        "0,",
+        "0)"
+        ]
+    },
+    { "name" : "get_stage_group_by_id",
+      "type" : "select",
+      "sql" : [
+        "SELECT * FROM stageGroup WHERE",
+        "id = ?"
+        ]
+    },
+    { "name" : "create_stage_group_stage",
+      "type" : "insert",
+      "sql" : [
+        "INSERT INTO stageGroupStage VALUES",
+        "(?,",
+        "?,",
+        "?)"
+        ]
+    },
+    { "name" : "get_stage_group_stage",
+      "type" : "select",
+      "sql" : [
+        "SELECT stageId,ordern FROM stageGroup WHERE",
+        "stageGroupId = ?"
         ]
     },
 { "comment" : " COMPETITION QUERIES " },
@@ -225,18 +260,19 @@
         "id = ?"
         ]
     },
-    { "name" : "create_competition_stage",
+    { "name" : "create_competition_stage_group",
       "type" : "insert",
       "sql" : [
         "INSERT INTO competitionStage VALUES",
         "(?,",
+        "?,",
         "?)"
         ]
     },
-    { "name" : "get_competition_stage",
+    { "name" : "get_competition_stage_group",
       "type" : "select",
       "sql" : [
-        "SELECT stageId FROM competitionStage WHERE",
+        "SELECT stageGroupId,ordern FROM competitionStageGroup WHERE",
         "competitionId = ?"
         ]
     },

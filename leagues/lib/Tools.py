@@ -14,3 +14,13 @@ def pick_random(input_set, count = 1):
 
     return items, input_set
 
+# Get a matrix of all possible combinations
+def combinations(input_set):
+    output = []
+    for i in range(0, len(input_set)):
+        (id, result_set) = pick_random(input_set)
+            for j in 
+
+
+
+

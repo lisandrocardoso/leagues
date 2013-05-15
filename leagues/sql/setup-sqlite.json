@@ -123,14 +123,14 @@
         "FOREIGN KEY(ownerId) REFERENCES user(id))"
         ]
     },
-    { "name" : "competitionStage",
+    { "name" : "competitionStageGroup",
       "sql" : [
-        "CREATE TABLE competitionStage",
+        "CREATE TABLE competitionStageGroup",
         "(competitionId INTEGER,",
-        "stageId INTEGER,",
+        "stageGroupId INTEGER,",
         "ordern INTEGER,",
         "FOREIGN KEY(competitionId) REFERENCES competition(id),",
-        "FOREIGN KEY(stageId) REFERENCES stage(id))"
+        "FOREIGN KEY(stageGroupId) REFERENCES stageGroup(id))"
         ]
     },
     { "name" : "competitionTeam",

@@ -10,10 +10,11 @@ from User import User
 from Team import Team
 from Match import Match
 from Fixture import Fixture
+from BaseStage import BaseStage
 from Draft import Draft
-from League import League
-from Stage import Stage
+from Group import Group
 from StageGroup import StageGroup
+from League import League
 from BaseCompetition import BaseCompetition
 
 from pprint import pprint
@@ -51,7 +52,6 @@ class ObjInterface():
             }
 
         self.dbtype = configuration.get('db_type')
-        print 'test'
         if self.dbtype == 'sqlite':
             logging.debug('OI Using sqlite interface')
             self.db = DBInterfaceSQLite(configuration.get('sqlite'))
@@ -209,7 +209,7 @@ class ObjInterface():
     @oilogger
     def get_team_by_id(self, tid):
         ret = self.db.run_query('get_team_by_id', (tid,))[0]
-        t = Team(tid, ret['name'], ret['ownerId'])
+        t = Team(tid, ret['name'], user_id=ret['ownerId'])
 
         self.save_to_storage('team', t)
 
@@ -220,7 +220,7 @@ class ObjInterface():
         ret = self.db.run_query('get_team_by_name', (name,))
         teams = []
         for row in ret:
-            t = Team(row['id'], row['name'], row['ownerId'])
+            t = Team(row['id'], row['name'], user_id=row['ownerId'])
             teams.append(t)
 
             self.save_to_storage('team', t)
@@ -269,8 +269,8 @@ class ObjInterface():
                 away_id=row['awayTeamId'])
 
             # Match-specific: played data fields completion
-            m.set_score(ret['homeTeamScore'], ret['awayTeamScore'])
-            if ret['played'] == 1:
+            m.set_score(row['homeTeamScore'], row['awayTeamScore'])
+            if row['played'] == 1:
                 m.end_match()
 
             matches.append(m)
@@ -282,6 +282,20 @@ class ObjInterface():
     @oilogger
     def get_match(self, mid):
         return self.load_from_storage('match', mid)
+
+    def update_match_data(self, mid, home, away):
+        m = self.get_match_by_id(mid)
+        if not m:
+            return False
+
+        m.set_score(home, away)
+        m.end_match()
+
+        self.db.run_query('update_match_data', (home, away, mid,))
+
+        self.save_to_storage('match', m)
+
+        return m
 
 # Fixture interface toolset
 
@@ -377,9 +391,9 @@ class ObjInterface():
         return s
 
     @oilogger
-    def create_stage_fixture(self, sid, fid):
+    def create_stage_fixture(self, sid, fid, ordern):
         rid = self.db.run_query('create_stage_fixture',
-            (sid, fid, ))
+            (sid, fid, ordern, ))
 
     @oilogger
     def get_stage_fixture_ids(self, sid):
@@ -387,7 +401,10 @@ class ObjInterface():
             (sid, ))
         fixtures = []
         for row in ret:
-            fixtures.append(row['fixtureId'])
+            fixtures.append( {
+                'ordern': ret['ordern'],
+                'fixtureId': ret['fixtureId']
+                } )
 
         return fixtures
 
@@ -474,5 +491,36 @@ class ObjInterface():
 
         c.set_data('current_stage', ret['current_stage'])
 
+    @oilogger
+    def create_competition_stage_group(self, cid, sgid, ordern):
+        rid = self.db.run_query('create_competition_stage_group',
+            (cid, sgid, ordern, ))
 
+    @oilogger
+    def get_competition_stage_group_ids(self, cid):
+        ret = self.db.run_query('get_competition_stage_group',
+            (cid,))
+        fixtures = []
+        for row in ret:
+            fixtures.append( {
+                'ordern': ret['ordern'],
+                'stageGroupId': ret['stageGroupId']
+                } )
+
+        return fixtures
+
+    @oilogger
+    def create_stage_team(self, cid, tid):
+        rid = self.db.run_query('create_competition_team',
+            (cid, tid, ))
+
+    @oilogger
+    def get_competition_team_ids(self, cid):
+        ret = self.db.run_query('get_competition_team',
+            (cid, ))
+        teams = []
+        for row in ret:
+            teams.append(ret['teamId'])
+
+        return teams
 

@@ -9,7 +9,7 @@ class Match(BaseObject):
         self.away_id = kwargs.get('away_id')
 
         self.data['home_score'] = 0
-        self.data['away:score'] = 0
+        self.data['away_score'] = 0
         self.data['winner'] = 0
         self.data['home_win'] = False
         self.data['away_win'] = False
@@ -23,13 +23,9 @@ class Match(BaseObject):
     def add_team_away(self, teamId):
         self.away_id = teamId
 
-    def add_score(self, home=0, away=0):
-        self.data['home_score'] += home
-        self.data['away_score'] += away
-
     def set_score(self, home, away):
         self.data['home_score'] = home
-        self.data['home_score'] = away
+        self.data['away_score'] = away
 
     def end_match(self):
         self.data['played'] = True
