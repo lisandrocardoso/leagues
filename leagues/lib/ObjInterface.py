@@ -6,11 +6,15 @@ import re
 
 from DBInterfaceSQLite import DBInterfaceSQLite
 
-from Draft import Draft
-from Fixture import Fixture
-from Match import Match
-from Team import Team
 from User import User
+from Team import Team
+from Match import Match
+from Fixture import Fixture
+from Draft import Draft
+from League import League
+from Stage import Stage
+from StageGroup import StageGroup
+from BaseCompetition import BaseCompetition
 
 from pprint import pprint
 
@@ -42,6 +46,7 @@ class ObjInterface():
             'match': {},
             'fixture': {},
             'stage': {},
+            'stage_group': {},
             'competition': {}
             }
 
@@ -401,13 +406,56 @@ class ObjInterface():
 
         return teams
 
+# StageGroup interface toolset
+
+    @oilogger
+    def create_stage_group(self, name):
+        sid = self.db.run_query('create_stage_group',
+            (name, ))
+        sg = StageGroup(sid, name)
+
+        self.save_to_storage('stage', sg)
+
+        return s
+
+    @oilogger
+    def get_stage_group_by_id(self, sgid):
+        ret = self.db.run_query('get_stage_group_by_id', (sgid, ))[0]
+        sg = StageGroup(sid, ret['name'], order=order)
+
+        if ret['finished'] == 1:
+            sg.set_data('finished', True)
+        elif ret['finished'] == 0:
+            sg.set_data('finished', False)
+
+        sg.set_data('current_stage', ret['current_stage'])
+
+        self.save_to_storage('stage_group', sg)
+
+        return sg
+
+    @oilogger
+    def create_stage_group_stage(self, sgid, sid):
+        rid = self.db.run_query('create_stage_group_stage',
+            (sgid, sid, ))
+
+    @oilogger
+    def get_stage_group_stage_ids(self, sgid):
+        ret = self.db.run_query('get_stage_group_stages',
+            (sgid, ))
+        stages = []
+        for row in ret:
+            stages.append(row['stageId'])
+
+        return fixtures
+
 # Competition interface toolset
 
     @oilogger
     def create_competition(self, name, userId, ctype):
         cid = self.db.run_query('create_competition',
             (name, userId, ctype))
-        c = Competition(cid, name, user_id=userId, ctype=ctype)
+        c = BaseCompetition(cid, name, user_id=userId, ctype=ctype)
 
         self.save_to_storage('competition', c)
 

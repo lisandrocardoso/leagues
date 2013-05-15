@@ -67,6 +67,7 @@
       "sql" : [
         "CREATE TABLE stage",
         "(id INTEGER PRIMARY KEY,",
+        "name TEXT,",
         "type TEXT,",
         "finished INTEGER,",
         "currentFixture INTEGER)"
@@ -91,6 +92,25 @@
         "FOREIGN KEY(teamId) REFERENCES team(id))"
         ]
     },
+    { "name" : "stageGroup",
+      "sql" : [
+        "CREATE TABLE stageGrouop",
+        "(id INTEGER PRIMARY KEY,",
+        "name TEXT,",
+        "finished INTEGER,",
+        "currentFixture INTEGER)"
+        ]
+    },
+    { "name" : "stageGroupStage",
+      "sql" : [
+        "CREATE TABLE stageGroupStage",
+        "(stageGroupId INTEGER,",
+        "stageId INTEGER,",
+        "FOREIGN KEY(stageGroupId) REFERENCES stageGroup(id),",
+        "FOREIGN KEY(stageId) REFERENCES stage(id))"
+        ]
+    },
+
     { "name" : "competition",
       "sql" : [
         "CREATE TABLE competition",

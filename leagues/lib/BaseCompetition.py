@@ -10,8 +10,8 @@ class BaseCompetition(BaseObject):
         self.userID = kwargs.get('user_id')
 
         self.teams = set()
-        #self.stages = [ [1,2,3 (groups)], [4, (draft) ] ]
-        self.stages = []
+        #self.stagegroups = [ StageGroup, StageGroup, ...]
+        self.stage_groups = []
 
         self.data['finished'] = 0
         self.data['current_stage'] = 0
@@ -27,6 +27,10 @@ class BaseCompetition(BaseObject):
 
 # Stage handling toolset
 
-    def add_stage_group(self, sid_list):
-        if not sid in self.stages:
-            self.stages.append(sid)
+    def add_stage_group(self, sgid):
+        if not sgid in self.stages:
+            self.stages.append(sgid)
+
+    def del_stage_group(self, sgid):
+        if sgid in self.stages:
+            self.stages.remove(sgid)
