@@ -342,29 +342,16 @@ class ObjInterface():
     def get_fixture(self, fid):
         return self.load_from_storage('fixture', fid)
 
-    def add_matches_to_fixture(self, fid, matches=[]):
-        logging.debug('OI add_matches_to_fixture ' + str(fid))
-        f = self.get_fixture(fid)
-        if not f:
-            return None
-
-        for mid in matches:
-            # If in local storage
-            if self.get_match(mid):
-                self.create_fixture_match(fid, mid)
-            # If not we'll check in DB
-            else:
-                mobj = self.get_match_by_id(mid)
-                if mobj:
-                    self.create_fixture_match(fid, mid)
-
 # Stage interface toolset
 
     @oilogger
-    def create_stage(self, name, stype):
+    def create_stage(self, name, stype, legs):
         sid = self.db.run_query('create_stage',
-            (name, stype, ))
-        s = Stage(sid, name, stype=stype)
+            (name, stype, legs, ))
+        if stype == 'draft':
+            s = Draft(sid, name, stype='draft', legs=legs)
+        elif stype == 'group':
+            s = Group(sid, name, stype='group', legs=legs)
 
         self.save_to_storage('stage', s)
 
@@ -375,16 +362,17 @@ class ObjInterface():
         ret = self.db.run_query('get_stage_by_id', (sid, ))[0]
         stype = ret['type']
         if stype == 'draft':
-            s = Draft(sid, ret['name'], stype='draft')
+            s = Draft(sid, ret['name'], stype='draft', legs=ret['legs'])
         elif stype == 'group':
-            s = Group(sid, ret['name'], stype='group')
+            s = Group(sid, ret['name'], stype='group', legs=ret['legs'])
 
         if ret['finished'] == 1:
             s.set_data('finished', True)
         elif ret['finished'] == 0:
             s.set_data('finished', False)
 
-        s.set_data('current_fixture', ret['current_fixture'])
+        s.set_data('current_fixture', ret['currentFixture'])
+        s.set_data('legs', ret['legs'])
 
         self.save_to_storage('stage', s)
 
@@ -419,7 +407,7 @@ class ObjInterface():
             (sid, ))
         teams = []
         for row in ret:
-            teams.append(ret['teamId'])
+            teams.append(row['teamId'])
 
         return teams
 
@@ -510,7 +498,7 @@ class ObjInterface():
         return fixtures
 
     @oilogger
-    def create_stage_team(self, cid, tid):
+    def create_competition_team(self, cid, tid):
         rid = self.db.run_query('create_competition_team',
             (cid, tid, ))
 
@@ -523,4 +511,59 @@ class ObjInterface():
             teams.append(ret['teamId'])
 
         return teams
+
+# Other interface methods
+
+    def add_matches_to_fixture(self, fid, matches=[]):
+        fobj = self.get_fixture(fid)
+        if not fobj:
+            return None
+
+        for mid in matches:
+            fobj.add_match(mid)
+            # If in local storage
+            if self.get_match(mid):
+                self.create_fixture_match(fid, mid)
+            # If not we'll check in DB
+            else:
+                mobj = self.get_match_by_id(mid)
+                if mobj:
+                    self.create_fixture_match(fid, mid)
+
+        self.save_to_storage('fixture', fobj)
+
+    def add_teams_to_stage(self, sid, teams=[]):
+        sobj = self.get_stage_by_id(sid)
+        if not sobj:
+            return None
+
+        if sobj.add_team(tid):
+            self.create_stage_team(sid, tid)
+
+        self.save_to_storage('stage', sobj)
+
+    def add_fixture_to_stage(self, sid, fid, ordern):
+        sobj = self.get_stage_by_id(sid)
+        if not sobj:
+            return None
+
+        if sobj.add_fixture(fid)
+        pass
+
+    def generate_stage_fixture_matches(self, sid):
+        fixture_lists = self.get_stage(sid).generate_fixtures()
+        stage_name = self.get_stage(sid).get_name()
+
+        for idx in range(0, len(fixture_lists)):
+            f = self.create_fixture('Round ' + str(idx + 1))
+            self.create_stage_fixture(sid, f.get_ID(), idx)
+            for pair in fixture_lists[idx]:
+                (h_team, a_team) = pair
+                h_name = self.get_team_by_id(h_team).get_name()
+                a_name = self.get_team_by_id(a_team).get_name()
+
+                match_name = h_name + " vs " + a_team
+
+                m = self.create_match(match_name, h_team, a_team)
+                self.add_matches_to_fixture(f.get_ID(), [m.get_id(), ])
 

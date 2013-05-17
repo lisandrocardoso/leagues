@@ -39,9 +39,9 @@ if __name__ == "__main__":
         print oi.get_user_by_id(i).get_ID()
 
         for j in range(1, 3):
-            t = oi.create_team('team' + str(j) + '_User' + str(i), i)
-            print oi.get_team_by_name('team' + str(j) +
-                '_User' + str(i))[0].get_name(),
+            t = oi.create_team('Team' + str(j) + '_User_' + str(i), i)
+            print oi.get_team_by_name('Team' + str(j) + '_User_' +
+                str(i))[0].get_name(),
             print oi.get_team_by_id(t.get_ID()).get_ID()
 
     print " -------------------------- "
@@ -60,37 +60,11 @@ if __name__ == "__main__":
     #    print nm.get_teams()
     #    pprint(nm.get_data())
 
-    print " ------------------------------------ "
-    print " -- Match & Fixture creation tests -- "
-    print " ------------------------------------ "
+    s = oi.create_stage('Stage 1', 'group', 1)
+    for tid in range(1, 11):
+        if oi.get_team_by_id(tid):
+            oi.add_team_to_stage(s.get_ID(), tid)
 
-    teams = []
-    for i in oi.storage.get('team').keys():
-        teams.append(oi.storage.get('team')[i].get_ID())
-
-    fixture_lists = Tools.combinations(set(teams))
-
-    for idx in range(0, len(fixture_lists)):
-        print "--------------" + str(idx)
-        fixture = oi.create_fixture('Fecha ' + str(idx + 1))
-        for pair in fixture_lists[idx]:
-            print pair
-            h_team = pair[0]
-            h_name = oi.get_team_by_id(h_team).get_name()
-            a_team = pair[1]
-            a_name = oi.get_team_by_id(a_team).get_name()
-            match_name = h_name + " vs " + a_name
-
-            match = oi.create_match(match_name, h_team, a_team)
-            fixture.add_match(match.get_ID())
-
-    print oi.storage.get('fixture')
-
-    for fixtid in oi.storage.get('fixture').keys():
-        fixture = oi.storage.get('fixture')[fixtid]
-        print " --------------------- "
-        print fixture.get_name()
-        for mid in fixture.get_matches():
-            print oi.get_match(mid).get_name()
+    oi.generate_stage_fixture_matches(s.get_ID())
 
     oi.db.terminate(True)

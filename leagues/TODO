@@ -1,0 +1,4 @@
+# Combinator
+
+Shifting for even sets works, picking pairs and discarding already existing in current fixture.
+Won't work for odd sets...

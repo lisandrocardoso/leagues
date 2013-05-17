@@ -69,6 +69,7 @@
         "(id INTEGER PRIMARY KEY,",
         "name TEXT,",
         "type TEXT,",
+        "legs INTEGER,",
         "finished INTEGER,",
         "currentFixture INTEGER)"
         ]

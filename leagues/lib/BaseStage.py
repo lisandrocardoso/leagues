@@ -17,6 +17,7 @@ class BaseStage(BaseObject):
         self.data['winners'] = []
         self.data['losers'] = []
         self.data['current_fixture'] = 0
+        self.data['legs'] = kwargs.get('legs')
 
 ### Fixture handling toolset
 
@@ -41,17 +42,15 @@ class BaseStage(BaseObject):
 
 ### Teams handling toolset
 
-    def add_team(self, teamId):
-        self.teams.add(teamId)
+    def add_team(self, tid):
+        if not tid in self.teams:
+            self.teams.add(tid)
+            return True
+        return False
 
     def get_teams(self):
         for team in self.teams:
             yield team
-
-### Data handling
-
-    def get_data(self):
-        return self.data
 
 ### Placeholders
 
