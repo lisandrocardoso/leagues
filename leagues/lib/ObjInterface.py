@@ -114,6 +114,12 @@ class ObjInterface():
         row = ret[0]
         u = User(row['id'], row['name'])
 
+        for cid in self.get_user_competition_ids(row['id']):
+            u.add_competition(cid)
+
+        for tid in self.get_user_team_ids(row['id']):
+            u.add_team(tid)
+
         self.save_to_storage('user', u)
 
         return u
@@ -127,6 +133,12 @@ class ObjInterface():
 
         row = ret[0]
         u = User(uid, row['name'])
+
+        for cid in self.get_user_competition_ids(uid):
+            u.add_competition(cid)
+
+        for tid in self.get_user_team_ids(uid):
+            u.add_team(tid)
 
         self.save_to_storage('user', u)
 
@@ -146,6 +158,13 @@ class ObjInterface():
         row = ret[0]
         if row['password'] == enc_password:
             u = User(row['id'], row['name'])
+
+            for cid in self.get_user_competition_ids(uid):
+                u.add_competition(cid)
+
+            for tid in self.get_user_team_ids(uid):
+                u.add_team(tid)
+
 
             self.save_to_storage('user', u)
 
@@ -171,12 +190,16 @@ class ObjInterface():
         for row in ret:
             competitions.append(row['competitionId'])
 
+        return competitions
+
     @oilogger
     def get_user_team_ids(self, uid):
         ret = self.db.run_query('get_user_teams', (uid,))
         teams = []
         for row in ret:
             teams.append(row['teamId'])
+
+        return teams
 
     @oilogger
     def get_user(self, uid):
@@ -209,7 +232,17 @@ class ObjInterface():
     @oilogger
     def get_team_by_id(self, tid):
         ret = self.db.run_query('get_team_by_id', (tid,))[0]
+        if not ret:
+            logging.debug('OI team not found ' + str(tid))
+            return None
+
         t = Team(tid, ret['name'], user_id=ret['ownerId'])
+
+        for mid in self.get_team_match_ids(tid):
+          t.add_match(mid)
+
+        for cid in self.get_team_competition_ids(tid):
+          t.add_competition(cid)
 
         self.save_to_storage('team', t)
 
@@ -218,6 +251,10 @@ class ObjInterface():
     @oilogger
     def get_team_by_name(self, name):
         ret = self.db.run_query('get_team_by_name', (name,))
+        if not ret:
+            logging.debug('OI team not found ' + str(name))
+            return None
+
         teams = []
         for row in ret:
             t = Team(row['id'], row['name'], user_id=row['ownerId'])
@@ -226,6 +263,25 @@ class ObjInterface():
             self.save_to_storage('team', t)
 
         return teams
+
+    @oilogger
+    def get_team_match_ids(self, tid):
+        ret = self.db.run_query('get_match_by_team', (tid, tid, ))
+        matches = []
+        for row in ret:
+          matches.append(row['id'])
+
+        return matches
+
+    @oilogger
+    def get_team_competition_ids(self, tid):
+        ret = self.db.run_query('get_competition_team',
+            (tid, ))
+        competitions = []
+        for row in ret:
+            competitionss.append(ret['competitionId'])
+
+        return competitions
 
     @oilogger
     def get_team(self, tid):
@@ -246,6 +302,10 @@ class ObjInterface():
     @oilogger
     def get_match_by_id(self, mid):
         ret = self.db.run_query('get_match_by_id', (mid,))[0]
+        if not ret:
+            logging.debug('OI match not found ' + str(mid))
+            return None
+
         m = Match(mid, ret['name'],
             home_id=ret['homeTeamId'],
             away_id=ret['awayTeamId'])
@@ -312,7 +372,14 @@ class ObjInterface():
     @oilogger
     def get_fixture_by_id(self, fid):
         ret = self.db.run_query('get_fixture_by_id', (fid, ))[0]
+        if not ret:
+            logging.debug('OI fixture not found ' + str(fid))
+            return None
+
         f = Fixture(fid, ret['name'])
+
+        for mid in self.get_fixture_match_ids(fid):
+            f.add_match(mid)
 
         if ret['finished'] == 1:
             f.set_data('finished', True)
@@ -360,11 +427,21 @@ class ObjInterface():
     @oilogger
     def get_stage_by_id(self, sid):
         ret = self.db.run_query('get_stage_by_id', (sid, ))[0]
+        if not ret:
+            logging.debug('OI stage not found ' + str(sid))
+            return None
+
         stype = ret['type']
         if stype == 'draft':
             s = Draft(sid, ret['name'], stype='draft', legs=ret['legs'])
         elif stype == 'group':
             s = Group(sid, ret['name'], stype='group', legs=ret['legs'])
+
+        for tid in self.get_stage_team_ids(sid):
+            s.add_team(tid)
+
+        for fid in self.get_stage_fixture_ids(sid):
+            s.add_fixture(fid)
 
         if ret['finished'] == 1:
             s.set_data('finished', True)
@@ -426,7 +503,14 @@ class ObjInterface():
     @oilogger
     def get_stage_group_by_id(self, sgid):
         ret = self.db.run_query('get_stage_group_by_id', (sgid, ))[0]
+        if not ret:
+            logging.debug('OI stage group not found ' + str(sgid))
+            return None
+
         sg = StageGroup(sid, ret['name'], order=order)
+
+        for sid in self.get_stage_group_stage_ids(sgid):
+            self.add_stage(sid)
 
         if ret['finished'] == 1:
             sg.set_data('finished', True)
@@ -469,6 +553,10 @@ class ObjInterface():
     @oilogger
     def get_competition_by_id(self, cid):
         ret = self.db.run_query('get_competition_by_id', (cid, ))[0]
+        if not ret:
+            logging.debug('OI competition not found ' + str(cid))
+            return None
+
         ctype = ret['type']
 
         if ctype == 'league':
@@ -476,6 +564,12 @@ class ObjInterface():
 
         if ret['finished'] == 1:
             c.set_data('finished', True)
+
+        for sgid in self.get_competition_stage_group_ids(cid):
+            c.add_stage_group(sgid)
+
+        for tid in self.get_competition_team_ids(cid):
+            c.add_team(tid)
 
         c.set_data('current_stage', ret['current_stage'])
 
@@ -520,35 +614,41 @@ class ObjInterface():
             return None
 
         for mid in matches:
-            fobj.add_match(mid)
-            # If in local storage
-            if self.get_match(mid):
+            # Validation
+            mobj = self.get_match_by_id(mid)
+            if mobj:
                 self.create_fixture_match(fid, mid)
-            # If not we'll check in DB
-            else:
-                mobj = self.get_match_by_id(mid)
-                if mobj:
-                    self.create_fixture_match(fid, mid)
+                fobj.add_match(mid)
 
         self.save_to_storage('fixture', fobj)
+
+        return fobj
 
     def add_teams_to_stage(self, sid, teams=[]):
         sobj = self.get_stage_by_id(sid)
         if not sobj:
             return None
 
-        if sobj.add_team(tid):
-            self.create_stage_team(sid, tid)
+        for tid in teams:
+            tobj = self.get_team_by_id(tid)
+            if tobj:
+                self.create_stage_team(sid, tid)
 
         self.save_to_storage('stage', sobj)
+
+        return sobj
 
     def add_fixture_to_stage(self, sid, fid, ordern):
         sobj = self.get_stage_by_id(sid)
         if not sobj:
             return None
 
-        if sobj.add_fixture(fid)
+        fobj = self.get_fixture_by_id(fid)
+          if fobj
         pass
+
+
+      # WTF COMO MANEJO LAS COSAS QUE TIENEN ORDEN? Ver Stage y Competition!!
 
     def generate_stage_fixture_matches(self, sid):
         fixture_lists = self.get_stage(sid).generate_fixtures()

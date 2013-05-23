@@ -85,6 +85,13 @@
         "name = ?"
         ]
     },
+    { "name" : "get_team_competition",
+      "type" : "select",
+      "sql" : [
+        "SELECT competitionId FROM competitionTeam WHERE",
+        "teamId = ?"
+        ]
+    },
 { "comment" : " MATCH QUERIES " },
     { "name" : "create_match",
       "type" : "insert",

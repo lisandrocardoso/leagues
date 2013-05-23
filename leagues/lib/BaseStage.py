@@ -10,7 +10,8 @@ class BaseStage(BaseObject):
     def set_up(self, **kwargs):
         self.stype = kwargs.get('stype')
 
-        self.fixtures = []
+        # fixtures = { ordern: fid, ordern, fid }
+        self.fixtures = {}
         self.teams = set()
 
         self.data['finished'] = False
@@ -21,7 +22,7 @@ class BaseStage(BaseObject):
 
 ### Fixture handling toolset
 
-    def add_fixture(self, fid):
+    def add_fixture(self, fid, oid):
         if not fid in self.fixtures:
             self.fixtures.append(fid)
             return True
@@ -33,12 +34,11 @@ class BaseStage(BaseObject):
         return self.fixtures[oid]
 
     def get_fixtures(self):
-        for i in self.fixtures:
-            yield self.fixtures[i]
+        for i in sorted(self.fixtures.keys()):
+            yield self.fixtures.get(i)
 
     def del_fixture(self, fid):
-        if fid in self.fixtures:
-            self.fixtures.remove(fid)
+        
 
 ### Teams handling toolset
 
